@@ -1,67 +1,82 @@
 body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background-color: #a0e0a0;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
+    align-items: center;
+    height: 100vh;
     margin: 0;
-    padding-top: 20px;
-    background-color: #e8f5e9; /* A light, friendly green */
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    color: #333;
 }
 
 #game-container {
     text-align: center;
     background-color: #ffffff;
-    padding: 20px 40px;
+    padding: 20px;
     border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
 }
 
-h1 {
-    color: #2e7d32; /* A darker, rich green */
-    font-size: 2.5em;
+#game-canvas {
+    background-color: #d0f0d0;
+    border: 5px solid #5a8e5a;
+    border-radius: 10px;
+}
+
+#instruction-text {
+    font-size: 2em;
+    color: #333;
+    margin: 10px 0;
+}
+
+#score-display {
+    font-size: 1.5em;
+    color: #555;
     margin-bottom: 10px;
 }
 
-#ui-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-    margin-bottom: 20px;
-}
-
-#instruction-text, #score-display {
-    font-size: 1.4em;
-    font-weight: bold;
-    color: #555;
-    background-color: #f1f8e9;
-    padding: 8px 15px;
-    border-radius: 8px;
-}
-
-#canvas-container {
-    margin-bottom: 20px;
-    /* The canvas element created by p5.js will be placed here. */
-    /* A border can help visualize the canvas area before it's drawn on. */
-    border: 3px dashed #a5d6a7;
-    border-radius: 10px;
-    line-height: 0; /* Prevents extra space under the canvas */
-}
-
 #reset-button {
-    padding: 12px 25px;
     font-size: 1.2em;
-    font-weight: bold;
-    color: white;
-    background-color: #66bb6a; /* A friendly, medium green */
+    padding: 10px 20px;
     border: none;
+    background-color: #ff6347; /* Tomato red */
+    color: white;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    box-shadow: 0 4px #d94e35;
+    transition: all 0.1s ease-in-out;
 }
 
 #reset-button:hover {
-    background-color: #4caf50; /* A slightly darker green on hover */
+    background-color: #ff7f50; /* Coral */
+}
+
+#reset-button:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 #d94e35;
+}
+
+/* --- Feedback Animations --- */
+
+.correct-answer {
+    animation: flash-green 0.3s ease-out;
+}
+
+@keyframes flash-green {
+    from { background-color: #c8e6c9; } /* Light Green */
+    to { background-color: #ffffff; }
+}
+
+.incorrect-answer {
+    animation: shake 0.5s, flash-red 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+@keyframes flash-red {
+    from { background-color: #ffcdd2; } /* Light Red */
+    to { background-color: #ffffff; }
 }

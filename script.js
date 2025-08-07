@@ -1,218 +1,191 @@
+// Get canvas and context
+const canvas = document.getElementById('game-canvas');
+const ctx = canvas.getContext('2d');
+
+// Get UI elements
+const gameContainer = document.getElementById('game-container');
+const instructionText = document.getElementById('instruction-text');
+const scoreDisplay = document.getElementById('score-display');
+const resetButton = document.getElementById('reset-button');
+
 // Game state variables
 let caterpillar;
 let leaves;
 let nextNumber;
 let score;
-let gameOver;
 
-// UI Elements
-let instructionText;
-let scoreDisplay;
-let resetButton;
-let canvas;
+// --- Main Functions ---
 
-// Game settings
-const segmentSize = 30;
-const leafSize = 40;
+/**
+ * Initializes or resets the game state.
+ */
+function init() {
+    // Initialize game state
+    caterpillar = [{x: 100, y: 300, num: 1}];
+    leaves = [];
+    nextNumber = 2;
+    score = 1;
 
-// p5.js setup function - runs once when the page loads
-function setup() {
-    // Set up the canvas
-    canvas = createCanvas(600, 400);
-    canvas.parent('canvas-container');
-
-    // Get UI elements from the DOM
-    instructionText = select('#instruction-text');
-    scoreDisplay = select('#score-display');
-    resetButton = select('#reset-button');
-    resetButton.mousePressed(resetGame);
-
-    // Initialize the game state
-    resetGame();
-}
-
-// Resets the game to its initial state
-function resetGame() {
-    gameOver = false;
-    caterpillar = [
-        { x: 100, y: 200, num: 1 },
-        { x: 100 - segmentSize, y: 200, num: 2 }
-    ];
-    score = 2;
-    nextNumber = 3;
-
-    updateUI();
     generateLeaves();
-    loop(); // Make sure the draw loop is running
+
+    // Update UI
+    instructionText.textContent = `Find the number ${nextNumber}!`;
+    scoreDisplay.textContent = `Length: ${score}`;
+
+    // Start the game loop
+    gameLoop();
 }
 
-// Main p5.js draw loop - runs continuously
-function draw() {
-    if (gameOver) {
-        background(200);
-        textSize(32);
-        textAlign(CENTER, CENTER);
-        fill(0);
-        text("You Win! Well Done!", width / 2, height / 2);
-        noLoop(); // Stop the draw loop
-        return;
-    }
+/**
+ * The main game loop, running on every frame.
+ */
+function gameLoop() {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
 
-    background(240, 255, 240); // A very light green, like a meadow
+/**
+ * Updates the game state. (Logic)
+ */
+function update() {
+    // Game logic will go here in a future step
+}
+
+/**
+ * Renders the game objects to the canvas. (Graphics)
+ */
+function draw() {
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     drawCaterpillar();
     drawLeaves();
 }
 
-// Draws the caterpillar on the canvas
+/**
+ * Draws the caterpillar on the canvas.
+ */
 function drawCaterpillar() {
-    for (let i = caterpillar.length - 1; i >= 0; i--) {
-        let segment = caterpillar[i];
-        // Body
-        fill(100, 200, 100); // Green
-        stroke(50, 100, 50);
-        strokeWeight(2);
-        ellipse(segment.x, segment.y, segmentSize);
+    ctx.font = '20px Comic Sans MS';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
 
-        // Number
-        fill(255);
-        noStroke();
-        textAlign(CENTER, CENTER);
-        textSize(15);
-        text(segment.num, segment.x, segment.y);
+    caterpillar.forEach((segment, index) => {
+        // Draw segment body
+        ctx.fillStyle = index === caterpillar.length - 1 ? '#ff6347' : '#4caf50'; // Head is red
+        ctx.beginPath();
+        ctx.arc(segment.x, segment.y, 20, 0, Math.PI * 2);
+        ctx.fill();
 
-        // Eyes on the head (first segment)
-        if (i === 0) {
-            fill(0);
-            ellipse(segment.x - 5, segment.y - 5, 4, 4);
-            ellipse(segment.x + 5, segment.y - 5, 4, 4);
-        }
-    }
+        // Draw segment number
+        ctx.fillStyle = 'white';
+        ctx.fillText(segment.num, segment.x, segment.y);
+    });
 }
 
-// Draws the leaves on the canvas
+/**
+ * Draws the leaves on the canvas.
+ */
 function drawLeaves() {
-    for (const leaf of leaves) {
-        fill(50, 150, 50); // Dark green for leaves
-        stroke(30, 100, 30);
-        strokeWeight(2);
-        ellipse(leaf.x, leaf.y, leafSize, leafSize + 10);
+    ctx.font = '24px Comic Sans MS';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
 
-        // Number on the leaf
-        fill(255);
-        noStroke();
-        textSize(18);
-        text(leaf.num, leaf.x, leaf.y);
-    }
+    leaves.forEach(leaf => {
+        // Draw leaf
+        ctx.fillStyle = '#6b8e23'; // Olive Drab
+        ctx.beginPath();
+        ctx.ellipse(leaf.x, leaf.y, 30, 20, Math.random(), 0, Math.PI * 2);
+        ctx.fill();
+
+        // Draw leaf number
+        ctx.fillStyle = 'white';
+        ctx.fillText(leaf.num, leaf.x, leaf.y);
+    });
 }
 
-// Generates a new set of leaves
+/**
+ * Generates a new set of leaves, including the correct next number.
+ */
 function generateLeaves() {
     leaves = [];
-    let correctLeaf = { x: 0, y: 0, num: nextNumber };
-    leaves.push(correctLeaf);
+    const correctLeafNum = nextNumber;
 
-    // Generate 2-3 incorrect leaves
-    let numIncorrect = floor(random(2, 4));
-    for (let i = 0; i < numIncorrect; i++) {
-        let incorrectNum;
+    // Add the correct leaf
+    leaves.push({
+        x: Math.random() * (canvas.width - 100) + 50,
+        y: Math.random() * (canvas.height - 200) + 50, // Keep leaves in upper area
+        num: correctLeafNum
+    });
+
+    // Add a few incorrect leaves
+    for (let i = 0; i < 3; i++) {
+        let wrongNum;
         do {
-            incorrectNum = floor(random(1, nextNumber + 5));
-        } while (incorrectNum === nextNumber || leaves.find(l => l.num === incorrectNum)); // Avoid duplicates
+            wrongNum = Math.floor(Math.random() * 10) + 1;
+        } while (wrongNum === correctLeafNum || leaves.some(l => l.num === wrongNum));
 
-        leaves.push({ x: 0, y: 0, num: incorrectNum });
+        leaves.push({
+            x: Math.random() * (canvas.width - 100) + 50,
+            y: Math.random() * (canvas.height - 200) + 50,
+            num: wrongNum
+        });
     }
 
-    // Shuffle and position the leaves to avoid overlap
-    leaves = shuffle(leaves);
-    for (let i = 0; i < leaves.length; i++) {
-        let placed = false;
-        while (!placed) {
-            let x = random(50, width - 50);
-            let y = random(50, height - 100);
-            let overlapping = false;
-            for (let j = 0; j < i; j++) {
-                if (dist(x, y, leaves[j].x, leaves[j].y) < leafSize * 2) {
-                    overlapping = true;
-                    break;
-                }
+    // Shuffle leaves positions
+    leaves.sort(() => Math.random() - 0.5);
+}
+
+/**
+ * Handles mouse clicks on the canvas.
+ * @param {MouseEvent} event
+ */
+function handleMouseClick(event) {
+    // Get click coordinates relative to the canvas
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    let correctLeafClicked = false;
+    leaves.forEach(leaf => {
+        const distance = Math.sqrt((mouseX - leaf.x) ** 2 + (mouseY - leaf.y) ** 2);
+        if (distance < 30) { // 30 is the radius of the leaf's click area
+            if (leaf.num === nextNumber) {
+                correctLeafClicked = true;
+                // --- Correct Choice ---
+                score++;
+                nextNumber++;
+
+                // Add new segment to caterpillar
+                const lastSegment = caterpillar[caterpillar.length - 1];
+                caterpillar.push({ x: lastSegment.x + 40, y: lastSegment.y, num: nextNumber - 1 });
+
+                // Update UI
+                instructionText.textContent = `Find the number ${nextNumber}!`;
+                scoreDisplay.textContent = `Length: ${score}`;
+
+                // Generate new leaves
+                generateLeaves();
+
+                // Visual Feedback
+                gameContainer.classList.add('correct-answer');
+                setTimeout(() => gameContainer.classList.remove('correct-answer'), 300);
+
+            } else {
+                // --- Incorrect Choice ---
+                gameContainer.classList.add('incorrect-answer');
+                setTimeout(() => gameContainer.classList.remove('incorrect-answer'), 500);
             }
-            if (!overlapping) {
-                leaves[i].x = x;
-                leaves[i].y = y;
-                placed = true;
-            }
         }
-    }
+    });
 }
 
-// p5.js function that runs when the mouse is pressed
-function mousePressed() {
-    if (gameOver) return;
 
-    for (const leaf of leaves) {
-        if (dist(mouseX, mouseY, leaf.x, leaf.y) < leafSize / 2) {
-            handleLeafClick(leaf);
-            return; // Exit after handling one click
-        }
-    }
-}
+// --- Event Listeners ---
+canvas.addEventListener('click', handleMouseClick);
+resetButton.addEventListener('click', init);
 
-// Logic for when a leaf is clicked
-function handleLeafClick(leaf) {
-    if (leaf.num === nextNumber) {
-        // CORRECT CHOICE
-        score++;
-        nextNumber++;
 
-        // Add a new segment to the caterpillar
-        const head = caterpillar[0];
-        const newSegment = { x: head.x + segmentSize, y: head.y, num: score };
-        // A bit of logic to make the caterpillar snake around
-        if(newSegment.x > width - segmentSize) {
-            newSegment.x = head.x;
-            newSegment.y = head.y + segmentSize;
-        }
-        caterpillar.unshift(newSegment); // Add to the front
-
-        if (score >= 10) { // Win condition
-            gameOver = true;
-        } else {
-            generateLeaves();
-        }
-    } else {
-        // INCORRECT CHOICE
-        // Shake the screen a little
-        canvas.elt.style.animation = 'shake 0.5s';
-        setTimeout(() => {
-            canvas.elt.style.animation = '';
-        }, 500);
-        // Maybe add a sound here in the future
-    }
-    updateUI();
-}
-
-// Updates the UI text
-function updateUI() {
-    scoreDisplay.html(`Length: ${score}`);
-    if (!gameOver) {
-        instructionText.html(`Find the number: ${nextNumber}`);
-    } else {
-        instructionText.html('You Won!');
-    }
-}
-
-// Add CSS for the shake animation
-function styleInject(css) {
-    const style = document.createElement('style');
-    style.innerHTML = css;
-    document.head.appendChild(style);
-}
-
-styleInject(`
-@keyframes shake {
-  10%, 90% { transform: translate3d(-1px, 0, 0); }
-  20%, 80% { transform: translate3d(2px, 0, 0); }
-  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-  40%, 60% { transform: translate3d(4px, 0, 0); }
-}
-`);
+// --- Start Game ---
+init();
