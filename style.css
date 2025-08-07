@@ -1,0 +1,67 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    padding-top: 20px;
+    background-color: #e8f5e9; /* A light, friendly green */
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+}
+
+#game-container {
+    text-align: center;
+    background-color: #ffffff;
+    padding: 20px 40px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #2e7d32; /* A darker, rich green */
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+#ui-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    margin-bottom: 20px;
+}
+
+#instruction-text, #score-display {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #555;
+    background-color: #f1f8e9;
+    padding: 8px 15px;
+    border-radius: 8px;
+}
+
+#canvas-container {
+    margin-bottom: 20px;
+    /* The canvas element created by p5.js will be placed here. */
+    /* A border can help visualize the canvas area before it's drawn on. */
+    border: 3px dashed #a5d6a7;
+    border-radius: 10px;
+    line-height: 0; /* Prevents extra space under the canvas */
+}
+
+#reset-button {
+    padding: 12px 25px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    background-color: #66bb6a; /* A friendly, medium green */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#reset-button:hover {
+    background-color: #4caf50; /* A slightly darker green on hover */
+}
