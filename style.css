@@ -1,0 +1,82 @@
+body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background-color: #a0e0a0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#game-container {
+    text-align: center;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+}
+
+#game-canvas {
+    background-color: #d0f0d0;
+    border: 5px solid #5a8e5a;
+    border-radius: 10px;
+}
+
+#instruction-text {
+    font-size: 2em;
+    color: #333;
+    margin: 10px 0;
+}
+
+#score-display {
+    font-size: 1.5em;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+#reset-button {
+    font-size: 1.2em;
+    padding: 10px 20px;
+    border: none;
+    background-color: #ff6347; /* Tomato red */
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px #d94e35;
+    transition: all 0.1s ease-in-out;
+}
+
+#reset-button:hover {
+    background-color: #ff7f50; /* Coral */
+}
+
+#reset-button:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 #d94e35;
+}
+
+/* --- Feedback Animations --- */
+
+.correct-answer {
+    animation: flash-green 0.3s ease-out;
+}
+
+@keyframes flash-green {
+    from { background-color: #c8e6c9; } /* Light Green */
+    to { background-color: #ffffff; }
+}
+
+.incorrect-answer {
+    animation: shake 0.5s, flash-red 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+@keyframes flash-red {
+    from { background-color: #ffcdd2; } /* Light Red */
+    to { background-color: #ffffff; }
+}
